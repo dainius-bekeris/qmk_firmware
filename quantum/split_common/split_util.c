@@ -117,12 +117,7 @@ __attribute__((weak)) bool is_keyboard_master(void) {
 
     // only check once, as this is called often
     if (usbstate == UNKNOWN) {
-        usbstate = usbIsActive() ? MASTER : SLAVE;
-
-        // Avoid NO_USB_STARTUP_CHECK - Disable USB as the previous checks seem to enable it somehow
-        if (usbstate == SLAVE) {
-            usb_disconnect();
-        }
+        usbstate = is_keyboard_left() ? MASTER : SLAVE;
     }
 
     return (usbstate == MASTER);
