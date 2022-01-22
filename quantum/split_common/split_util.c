@@ -112,12 +112,19 @@ __attribute__((weak)) bool is_keyboard_left(void) {
     return is_keyboard_master();
 }
 
+bool has_usb(void) {
+   USBCON |= (1 << OTGPADE); //enables VBUS pad
+   _delay_us(5);
+   return (USBSTA & (1<<VBUS));  //checks state of VBUS
+}
+
 __attribute__((weak)) bool is_keyboard_master(void) {
     static enum { UNKNOWN, MASTER, SLAVE } usbstate = UNKNOWN;
 
     // only check once, as this is called often
     if (usbstate == UNKNOWN) {
-        usbstate = usbIsActive() ? MASTER : SLAVE;
+        //usbstate = usbIsActive() ? MASTER : SLAVE;
+        usbstate = isLeftHand ? MASTER : SLAVE;
 
         // Avoid NO_USB_STARTUP_CHECK - Disable USB as the previous checks seem to enable it somehow
         if (usbstate == SLAVE) {
